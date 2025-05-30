@@ -1,0 +1,53 @@
+const { faker } = require("@faker-js/faker");
+const mysql = require("mysql2");
+const express = require("express");
+const app = express();
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "prompt",
+  database: "delta_app",
+});
+
+let getRandomUser = () => {
+  return [
+    faker.string.uuid(),
+    faker.internet.username(),
+    faker.internet.email(),
+    faker.internet.password(),
+  ];
+};
+
+app.get("/", (req, res) => {
+  let q = `SELECT count(*) FROM user`;
+  connection.query(q, (err, results) => {
+    if (err) {
+      console.log(err);
+      return res.send("Some error in database");
+    }
+    res.send("success ");
+    console.log(results[0]["count(*)"]);
+  });
+});
+
+// app.get("/", (req, res) => {
+//   let q = `SELECT count(*) FROM user`;
+//   try {
+//     connection.query(q ,(err, results) => {
+//       if (err) throw err;
+//       res.send("success");
+//       console.log(results[0]["count(*)"]);
+
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     res.send("Some error in database");
+//   }
+// });
+
+app.listen(8080, () => {
+  console.log("App listening on port number 8080");
+});
+
+// connection.end();
